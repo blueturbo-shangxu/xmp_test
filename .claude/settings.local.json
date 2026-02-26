@@ -8,7 +8,10 @@
       "Bash(~/.ssh/config << 'EOF'\n# Default \\(for ads_schedule_task\\)\nHost github.com\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/id_rsa\n\n# For xmp_test repository\nHost github-xmp-test\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/xmp_test\nEOF)",
       "Bash(chmod:*)",
       "Bash(git remote set-url:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(lsof:*)"
     ]
   }
 }
