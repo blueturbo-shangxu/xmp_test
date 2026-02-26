@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from src.database import get_db
-from src.models import Account, Campaign, AdGroup, SyncTask, OAuthToken
+from src.models import GoogleAdAccount, GoogleCampaign, GoogleAdGroup, SyncTask, OAuthToken
 from src.services.google_ads_service import google_ads_service
 
 logger = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ class AccountResponse(BaseModel):
     timezone: Optional[str]
     account_type: str
     status: str
+    sync_enabled: bool
     has_valid_token: bool
     created_at: datetime
 
@@ -34,14 +35,14 @@ class AccountResponse(BaseModel):
 
 
 class SyncTaskRequest(BaseModel):
-    account_id: int
-    task_type: str  # CAMPAIGNS, AD_GROUPS, ADS, KEYWORDS, PERFORMANCE
     customer_id: str
+    task_type: str  # CAMPAIGNS, AD_GROUPS, ADS, KEYWORDS, PERFORMANCE
 
 
 class SyncTaskResponse(BaseModel):
     id: int
-    account_id: int
+    platform: str
+    account_key: str
     task_type: str
     status: str
     total_records: int
@@ -73,13 +74,14 @@ async def list_accounts(
         账户列表
     """
     try:
-        accounts = db.query(Account).offset(skip).limit(limit).all()
+        accounts = db.query(GoogleAdAccount).offset(skip).limit(limit).all()
 
         # 检查每个账户的token状态
         result = []
         for account in accounts:
             token = db.query(OAuthToken).filter(
-                OAuthToken.account_id == account.id,
+                OAuthToken.platform == 'google',
+                OAuthToken.account_key == account.customer_id,
                 OAuthToken.is_valid == True
             ).first()
 
@@ -91,6 +93,7 @@ async def list_accounts(
                 "timezone": account.timezone,
                 "account_type": account.account_type,
                 "status": account.status,
+                "sync_enabled": account.sync_enabled,
                 "has_valid_token": token is not None and not token.is_expired,
                 "created_at": account.created_at
             }
@@ -103,29 +106,32 @@ async def list_accounts(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/accounts/{account_id}", response_model=AccountResponse)
+@router.get("/accounts/{customer_id}", response_model=AccountResponse)
 async def get_account(
-    account_id: int,
+    customer_id: str,
     db: Session = Depends(get_db)
 ):
     """
     获取单个账户详情
 
     Args:
-        account_id: 账户ID
+        customer_id: Google Ads Customer ID
         db: 数据库会话
 
     Returns:
         账户详情
     """
     try:
-        account = db.query(Account).filter(Account.id == account_id).first()
+        account = db.query(GoogleAdAccount).filter(
+            GoogleAdAccount.customer_id == customer_id
+        ).first()
 
         if not account:
             raise HTTPException(status_code=404, detail="Account not found")
 
         token = db.query(OAuthToken).filter(
-            OAuthToken.account_id == account.id,
+            OAuthToken.platform == 'google',
+            OAuthToken.account_key == account.customer_id,
             OAuthToken.is_valid == True
         ).first()
 
@@ -137,6 +143,7 @@ async def get_account(
             "timezone": account.timezone,
             "account_type": account.account_type,
             "status": account.status,
+            "sync_enabled": account.sync_enabled,
             "has_valid_token": token is not None and not token.is_expired,
             "created_at": account.created_at
         }
@@ -165,13 +172,16 @@ async def sync_campaigns(
     """
     try:
         # 验证账户存在
-        account = db.query(Account).filter(Account.id == request.account_id).first()
+        account = db.query(GoogleAdAccount).filter(
+            GoogleAdAccount.customer_id == request.customer_id
+        ).first()
         if not account:
             raise HTTPException(status_code=404, detail="Account not found")
 
         # 创建同步任务
         sync_task = SyncTask(
-            account_id=request.account_id,
+            platform='google',
+            account_key=request.customer_id,
             task_type='CAMPAIGNS',
             status='RUNNING',
             started_at=datetime.now()
@@ -183,7 +193,7 @@ async def sync_campaigns(
         # 执行同步
         success = google_ads_service.sync_campaigns(
             db,
-            request.account_id,
+            account.id,
             request.customer_id,
             sync_task.id
         )
@@ -192,7 +202,7 @@ async def sync_campaigns(
         db.refresh(sync_task)
 
         if not success:
-            logger.error(f"Campaign sync failed for account {request.account_id}")
+            logger.error(f"Campaign sync failed for account {request.customer_id}")
 
         return sync_task
 
@@ -220,13 +230,16 @@ async def sync_ad_groups(
     """
     try:
         # 验证账户存在
-        account = db.query(Account).filter(Account.id == request.account_id).first()
+        account = db.query(GoogleAdAccount).filter(
+            GoogleAdAccount.customer_id == request.customer_id
+        ).first()
         if not account:
             raise HTTPException(status_code=404, detail="Account not found")
 
         # 创建同步任务
         sync_task = SyncTask(
-            account_id=request.account_id,
+            platform='google',
+            account_key=request.customer_id,
             task_type='AD_GROUPS',
             status='RUNNING',
             started_at=datetime.now()
@@ -238,7 +251,7 @@ async def sync_ad_groups(
         # 执行同步
         success = google_ads_service.sync_ad_groups(
             db,
-            request.account_id,
+            account.id,
             request.customer_id,
             task_id=sync_task.id
         )
@@ -247,7 +260,7 @@ async def sync_ad_groups(
         db.refresh(sync_task)
 
         if not success:
-            logger.error(f"Ad group sync failed for account {request.account_id}")
+            logger.error(f"Ad group sync failed for account {request.customer_id}")
 
         return sync_task
 
@@ -290,7 +303,7 @@ async def get_sync_task(
 
 @router.get("/campaigns")
 async def list_campaigns(
-    account_id: int = Query(..., description="账户ID"),
+    customer_id: str = Query(..., description="Google Ads Customer ID"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
     db: Session = Depends(get_db)
@@ -299,7 +312,7 @@ async def list_campaigns(
     获取推广活动列表
 
     Args:
-        account_id: 账户ID
+        customer_id: Google Ads Customer ID
         skip: 跳过的记录数
         limit: 返回的最大记录数
         db: 数据库会话
@@ -308,8 +321,8 @@ async def list_campaigns(
         推广活动列表
     """
     try:
-        campaigns = db.query(Campaign).filter(
-            Campaign.account_id == account_id
+        campaigns = db.query(GoogleCampaign).filter(
+            GoogleCampaign.customer_id == customer_id
         ).offset(skip).limit(limit).all()
 
         result = []
@@ -338,7 +351,7 @@ async def list_campaigns(
 
 @router.get("/ad-groups")
 async def list_ad_groups(
-    account_id: int = Query(..., description="账户ID"),
+    customer_id: str = Query(..., description="Google Ads Customer ID"),
     campaign_id: Optional[int] = Query(None, description="推广活动ID"),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
@@ -348,7 +361,7 @@ async def list_ad_groups(
     获取广告组列表
 
     Args:
-        account_id: 账户ID
+        customer_id: Google Ads Customer ID
         campaign_id: 可选的推广活动ID
         skip: 跳过的记录数
         limit: 返回的最大记录数
@@ -358,10 +371,12 @@ async def list_ad_groups(
         广告组列表
     """
     try:
-        query = db.query(AdGroup).filter(AdGroup.account_id == account_id)
+        query = db.query(GoogleAdGroup).filter(
+            GoogleAdGroup.customer_id == customer_id
+        )
 
         if campaign_id:
-            query = query.filter(AdGroup.campaign_id == campaign_id)
+            query = query.filter(GoogleAdGroup.campaign_id == campaign_id)
 
         ad_groups = query.offset(skip).limit(limit).all()
 

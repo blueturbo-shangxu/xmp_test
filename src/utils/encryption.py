@@ -4,7 +4,7 @@ Token encryption utilities
 """
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 import base64
 import logging
@@ -33,7 +33,7 @@ class TokenEncryption:
 
         # 如果密钥不是32字节,使用PBKDF2派生密钥
         if len(encryption_key) != 32:
-            kdf = PBKDF2(
+            kdf = PBKDF2HMAC(
                 algorithm=hashes.SHA256(),
                 length=32,
                 salt=b'xmp_auth_server_salt',  # 在生产环境中应该使用随机盐

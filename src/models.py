@@ -35,6 +35,7 @@ class OAuthToken(Base):
     last_refreshed_at = Column(TIMESTAMP, comment='最后刷新时间')
     refresh_count = Column(Integer, default=0, comment='刷新次数')
     error_message = Column(Text, comment='最后一次错误信息')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
@@ -73,6 +74,7 @@ class AuthorizationLog(Base):
     request_data = Column(JSONB, comment='请求数据(脱敏)')
     response_data = Column(JSONB, comment='响应数据(脱敏)')
     duration_ms = Column(Integer, comment='操作耗时(毫秒)')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     created_at = Column(TIMESTAMP, server_default=func.now(), index=True)
 
     __table_args__ = (
@@ -109,6 +111,8 @@ class SyncTask(Base):
     duration_seconds = Column(Integer, comment='耗时(秒)')
     retry_count = Column(Integer, default=0, comment='重试次数')
     next_retry_at = Column(TIMESTAMP, index=True, comment='下次重试时间')
+    raw_data = Column(JSONB, comment='原始任务数据(保留完整信息)')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     created_at = Column(TIMESTAMP, server_default=func.now(), index=True)
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
@@ -138,6 +142,7 @@ class APIRateLimit(Base):
     window_start = Column(TIMESTAMP, nullable=False, comment='时间窗口开始')
     window_end = Column(TIMESTAMP, nullable=False, index=True, comment='时间窗口结束')
     is_throttled = Column(Boolean, default=False, index=True, comment='是否被限流')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
@@ -164,6 +169,9 @@ class GoogleAdAccount(Base):
     descriptive_name = Column(String(255), comment='描述性名称')
     can_manage_clients = Column(Boolean, default=False, comment='是否可管理客户')
     test_account = Column(Boolean, default=False, comment='是否测试账户')
+    sync_enabled = Column(Boolean, default=True, index=True, comment='是否启用同步功能')
+    raw_data = Column(JSONB, comment='原始账户数据(保留完整信息)')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
@@ -205,6 +213,7 @@ class GoogleCampaign(Base):
     target_cpa_micros = Column(BigInteger, comment='目标CPA(微单位)')
     target_roas = Column(DECIMAL(10, 4), comment='目标ROAS')
     raw_data = Column(JSONB, comment='原始数据(JSON)')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     last_synced_at = Column(TIMESTAMP, index=True, comment='最后同步时间')
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
@@ -243,6 +252,7 @@ class GoogleAdGroup(Base):
     target_cpa_micros = Column(BigInteger, comment='目标CPA(微单位)')
     percent_cpc_bid_micros = Column(BigInteger, comment='百分比CPC出价(微单位)')
     raw_data = Column(JSONB, comment='原始数据(JSON)')
+    ext_info = Column(JSONB, default={}, comment='扩展信息(预留字段)')
     last_synced_at = Column(TIMESTAMP, index=True, comment='最后同步时间')
     created_at = Column(TIMESTAMP, server_default=func.now())
     updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())

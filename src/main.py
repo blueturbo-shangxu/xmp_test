@@ -280,7 +280,7 @@ async def home():
                 <div class="api-section">
                     <h3>API接口文档</h3>
                     <div class="api-endpoint">
-                        <code>GET /auth/authorize</code>
+                        <code>GET /ads/auth/authorize</code>
                         <p>启动OAuth2授权流程</p>
                     </div>
                     <div class="api-endpoint">
@@ -316,7 +316,7 @@ async def home():
                 }
 
                 // 构建授权URL
-                let authUrl = '/auth/authorize';
+                let authUrl = '/ads/auth/authorize';
                 if (customerId) {
                     authUrl += '?customer_id=' + encodeURIComponent(customerId);
                 }

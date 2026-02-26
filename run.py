@@ -31,6 +31,6 @@ if __name__ == "__main__":
         app,
         host=settings.HOST,
         port=settings.PORT,
-        reload=settings.DEBUG,
+        # reload=settings.DEBUG,
         log_level=settings.LOG_LEVEL.lower()
     )

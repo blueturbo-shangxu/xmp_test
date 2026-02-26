@@ -16,7 +16,7 @@ from src.services.google_ads_service import google_ads_service
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/auth", tags=["authentication"])
+router = APIRouter(prefix="/ads/auth", tags=["authentication"])
 
 
 @router.get("/authorize", response_class=HTMLResponse)
@@ -286,7 +286,7 @@ async def oauth_callback(
             <div class="container">
                 <h2>⚠️ 授权被拒绝</h2>
                 <p>您已取消授权。要使用XMP系统,您需要授予访问权限。</p>
-                <a href="/auth/authorize" class="back-link">重新授权</a>
+                <a href="/ads/auth/authorize" class="back-link">重新授权</a>
             </div>
         </body>
         </html>
@@ -336,7 +336,7 @@ async def oauth_callback(
             <div class="container">
                 <h2>❌ 授权失败</h2>
                 <p>缺少授权码参数。请重新开始授权流程。</p>
-                <a href="/auth/authorize" class="back-link">重新授权</a>
+                <a href="/ads/auth/authorize" class="back-link">重新授权</a>
             </div>
         </body>
         </html>
@@ -351,9 +351,16 @@ async def oauth_callback(
             if len(parts) == 2:
                 customer_id = parts[1]
 
-        # 如果没有customer_id,无法继续
+        # 如果没有customer_id，使用配置中的默认值
         if not customer_id:
-            logger.error("Missing customer_id in authorization callback")
+            from src.config import settings
+            customer_id = settings.GOOGLE_ADS_LOGIN_CUSTOMER_ID
+            if customer_id:
+                logger.info(f"Using default customer_id from config: {customer_id}")
+
+        # 如果仍然没有customer_id，显示错误
+        if not customer_id:
+            logger.error("Missing customer_id in authorization callback and no default configured")
             html_content = """
             <!DOCTYPE html>
             <html>
@@ -392,9 +399,10 @@ async def oauth_callback(
             <body>
                 <div class="container">
                     <h2>❌ 授权失败</h2>
-                    <p>缺少Customer ID参数。请在授权URL中提供customer_id参数。</p>
-                    <p>示例: /auth/authorize?customer_id=123-456-7890</p>
-                    <a href="/auth/authorize" class="back-link">重新授权</a>
+                    <p>缺少Customer ID参数，且未配置默认值。</p>
+                    <p>请在 .env 中配置 GOOGLE_ADS_LOGIN_CUSTOMER_ID</p>
+                    <p>或在授权URL中提供: /ads/auth/authorize?customer_id=123-456-7890</p>
+                    <a href="/ads/auth/authorize" class="back-link">重新授权</a>
                 </div>
             </body>
             </html>
@@ -587,7 +595,7 @@ async def oauth_callback(
                     <strong>错误信息:</strong><br>
                     {error_message}
                 </div>
-                <a href="/auth/authorize" class="back-link">重新授权</a>
+                <a href="/ads/auth/authorize" class="back-link">重新授权</a>
             </div>
         </body>
         </html>
