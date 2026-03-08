@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS oauth_tokens (
     id BIGSERIAL PRIMARY KEY,
     platform VARCHAR(20) NOT NULL,                          -- 平台标识: google, meta, tiktok
     account_key VARCHAR(100) NOT NULL,                      -- 账户唯一标识
+    email  VARCHAR(200) NOT NULL,                           -- 账户邮箱
     access_token TEXT NOT NULL,                             -- 访问令牌(加密存储)
     refresh_token TEXT,                                     -- 刷新令牌(加密存储)
     token_type VARCHAR(50) DEFAULT 'Bearer',                -- Token类型
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS oauth_tokens (
     last_refreshed_at TIMESTAMP,                            -- 最后刷新时间
     refresh_count INTEGER DEFAULT 0,                        -- 刷新次数
     error_message TEXT,                                     -- 最后一次错误信息
+    advertiser_ids JSONB DEFAULT '[]',                      -- 成功同步的广告账户ID列表
     ext_info JSONB DEFAULT '{}',                            -- 扩展信息(预留字段)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -40,6 +42,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS uk_platform_account ON oauth_tokens(platform, 
 COMMENT ON TABLE oauth_tokens IS 'OAuth令牌表(多平台通用)';
 COMMENT ON COLUMN oauth_tokens.platform IS '平台标识: google, meta, tiktok';
 COMMENT ON COLUMN oauth_tokens.account_key IS '账户唯一标识';
+COMMENT ON COLUMN oauth_tokens.advertiser_ids IS '成功同步的广告账户ID列表';
 COMMENT ON COLUMN oauth_tokens.ext_info IS '扩展信息(预留字段)';
 
 

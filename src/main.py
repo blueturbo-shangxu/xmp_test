@@ -9,13 +9,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from src.config import settings, setup_logging
-from src.database import check_db_connection, init_db
-from src.routes.auth import router as auth_router
-from src.routes.api import router as api_router
+from src.core import settings, setup_api_logging
+from src.sql import check_db_connection, init_db
+from src.api import auth_router, api_router, auth_api_router, auth_page_router
+from src.api.feishu_router import router as feishu_router
+from src.api.sync_router import router as sync_router
+from src.middleware.log_middleware import add_process_time
 
-# 配置日志
-logger = setup_logging()
+# 配置API服务日志
+logger = setup_api_logging()
 
 
 @asynccontextmanager
@@ -53,9 +55,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 添加日志中间件
+app.middleware("autolog")(add_process_time)
+
 # 注册路由
 app.include_router(auth_router)
 app.include_router(api_router)
+app.include_router(feishu_router)
+app.include_router(auth_api_router)    # Google OAuth API
+app.include_router(auth_page_router)   # Google OAuth 测试页面
+app.include_router(sync_router)        # 同步任务 API
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -385,10 +394,10 @@ if __name__ == "__main__":
     import uvicorn
 
     # 创建数据库表(如果不存在)
-    try:
-        init_db()
-    except Exception as e:
-        logger.error(f"Failed to initialize database: {str(e)}")
+    # try:
+    #     init_db()
+    # except Exception as e:
+    #     logger.error(f"Failed to initialize database: {str(e)}")
 
     # 启动服务器
     uvicorn.run(
