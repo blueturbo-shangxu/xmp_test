@@ -1,4 +1,4 @@
 """
-XMP Auth Server Package
+XMP Server Package
 """
 __version__ = "1.0.0"

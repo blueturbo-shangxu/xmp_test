@@ -24,7 +24,7 @@ logger = setup_api_logging()
 async def lifespan(app: FastAPI):
     """应用生命周期管理"""
     # 启动时执行
-    logger.info("Starting XMP Auth Server...")
+    logger.info("Starting XMP Server...")
 
     # 检查数据库连接
     if check_db_connection():
@@ -35,12 +35,12 @@ async def lifespan(app: FastAPI):
     yield
 
     # 关闭时执行
-    logger.info("Shutting down XMP Auth Server...")
+    logger.info("Shutting down XMP Server...")
 
 
 # 创建FastAPI应用
 app = FastAPI(
-    title="XMP Auth Server",
+    title="XMP Server",
     description="Google Ads授权和数据同步服务",
     version="1.0.0",
     lifespan=lifespan
@@ -78,7 +78,7 @@ async def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>XMP Auth Server - Google Ads授权系统</title>
+        <title>XMP Server - Google Ads授权系统</title>
         <style>
             * {
                 margin: 0;
@@ -235,7 +235,7 @@ async def home():
     <body>
         <div class="container">
             <div class="header">
-                <h1>🚀 XMP Auth Server</h1>
+                <h1>🚀 XMP Server</h1>
                 <p>Google Ads OAuth2授权与数据同步系统</p>
             </div>
 

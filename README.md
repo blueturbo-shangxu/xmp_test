@@ -1,4 +1,4 @@
-# XMP Auth Server
+# XMP Server
 
 Google Ads OAuth2 授权与数据同步系统
 
@@ -8,7 +8,7 @@ Google Ads OAuth2 授权与数据同步系统
 
 ## 📖 项目简介
 
-XMP Auth Server 是一个基于 Python + FastAPI 的 Google Ads OAuth2 授权和数据同步服务，为广告 XMP 系统提供完整的授权管理和数据同步能力。
+XMP Server 是一个基于 Python + FastAPI 的 Google Ads OAuth2 授权和数据同步服务，为广告 XMP 系统提供完整的授权管理和数据同步能力。
 
 ### 核心特性
 
@@ -23,7 +23,7 @@ XMP Auth Server 是一个基于 Python + FastAPI 的 Google Ads OAuth2 授权和
 ## 🏗️ 项目结构
 
 ```
-xmp_auth_server/
+xmp_server/
 ├── conf/                           # 配置文件目录
 │   ├── .env.example               # 环境变量示例
 │   └── .env                       # 环境变量配置(需创建)
@@ -73,7 +73,7 @@ xmp_auth_server/
 ```bash
 # 克隆项目
 git clone <repository-url>
-cd xmp_auth_server
+cd xmp_server
 
 # 创建虚拟环境(推荐)
 python -m venv venv
@@ -92,11 +92,11 @@ pip install -r requirements.txt
 
 ```bash
 # 创建数据库
-createdb xmp_auth_server
+createdb xmp_server
 
 # 或使用 psql
 psql -U postgres
-CREATE DATABASE xmp_auth_server;
+CREATE DATABASE xmp_server;
 \q
 ```
 
@@ -118,7 +118,7 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_USER=your_user
 DB_PASSWORD=your_password
-DB_NAME=xmp_auth_server
+DB_NAME=xmp_server
 
 # Google OAuth2 配置
 GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
@@ -315,7 +315,7 @@ python src/scripts/refresh_tokens.py --check-invalid
 
 ```bash
 # 每小时执行一次
-0 * * * * cd /path/to/xmp_auth_server && python src/scripts/refresh_tokens.py
+0 * * * * cd /path/to/xmp_server && python src/scripts/refresh_tokens.py
 ```
 
 ## 🧪 测试
@@ -418,15 +418,15 @@ LOG_LEVEL=INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
 ```ini
 [Unit]
-Description=XMP Auth Server
+Description=XMP Server
 After=network.target postgresql.service
 
 [Service]
 Type=simple
 User=www-data
-WorkingDirectory=/path/to/xmp_auth_server
-Environment="PATH=/path/to/xmp_auth_server/venv/bin"
-ExecStart=/path/to/xmp_auth_server/venv/bin/python run.py
+WorkingDirectory=/path/to/xmp_server
+Environment="PATH=/path/to/xmp_server/venv/bin"
+ExecStart=/path/to/xmp_server/venv/bin/python run.py
 Restart=always
 
 [Install]

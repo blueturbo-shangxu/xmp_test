@@ -1,5 +1,5 @@
 """
-Task module for XMP Auth Server
+Task module for XMP Server
 异步任务处理系统
 """
 from src.task.base import BaseTask, TaskType

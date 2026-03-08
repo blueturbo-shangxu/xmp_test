@@ -1,4 +1,4 @@
--- XMP Auth Server Database Schema (PostgreSQL)
+-- XMP Server Database Schema (PostgreSQL)
 -- Database: socialbooster
 -- Description: Multi-platform ad authorization and data management
 -- Current Support: Google Ads (Meta and TikTok to be added later)

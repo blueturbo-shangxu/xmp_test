@@ -115,7 +115,7 @@ from src.api import auth_router, api_router
 
 logger = setup_logging()
 
-app = FastAPI(title="XMP Auth Server")
+app = FastAPI(title="XMP Server")
 app.include_router(auth_router)
 app.include_router(api_router)
 ```

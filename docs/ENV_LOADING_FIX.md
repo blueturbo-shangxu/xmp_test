@@ -58,7 +58,7 @@ env_file = BASE_DIR / 'conf' / '.env'
 ## 📂 项目结构
 
 ```
-xmp_auth_server/                    ← BASE_DIR 应该指向这里
+xmp_server/                    ← BASE_DIR 应该指向这里
 ├── conf/
 │   ├── .env                         ← .env 文件在这里
 │   └── .env.example
@@ -101,13 +101,13 @@ python test_config_loading.py
 
 1. BASE_DIR 检查
 ------------------------------------------------------------
-BASE_DIR: g:\work\xmp_auth_server
+BASE_DIR: g:\work\xmp_server
 BASE_DIR 类型: <class 'pathlib.WindowsPath'>
 BASE_DIR 存在: True
 
 2. .env 文件检查
 ------------------------------------------------------------
-.env 文件路径: g:\work\xmp_auth_server\conf\.env
+.env 文件路径: g:\work\xmp_server\conf\.env
 .env 文件存在: True
 .env 文件大小: 1541 字节
 
@@ -161,8 +161,8 @@ GOOGLE_ADS_API_VERSION: v22         ← 应该是 v22，不是默认的 v16
    # 检查 BASE_DIR
    from src.core.config import BASE_DIR
    print(BASE_DIR)
-   # 应该输出: /path/to/xmp_auth_server
-   # 而不是: /path/to/xmp_auth_server/src
+   # 应该输出: /path/to/xmp_server
+   # 而不是: /path/to/xmp_server/src
    ```
 
 2. **python-dotenv 未安装**

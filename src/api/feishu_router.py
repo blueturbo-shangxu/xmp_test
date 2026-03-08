@@ -382,7 +382,7 @@ async def feishu_login_page():
             </div>
 
             <div class="footer">
-                XMP Auth Server - Feishu OAuth Authentication
+                XMP Server - Feishu OAuth Authentication
             </div>
         </div>
     </body>

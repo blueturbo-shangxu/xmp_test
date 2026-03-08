@@ -1,5 +1,5 @@
 """
-Logging configuration module for XMP Auth Server
+Logging configuration module for XMP Server
 日志配置模块，提供接口服务和离线任务服务两种不同的日志配置
 """
 import os

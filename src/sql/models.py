@@ -1,5 +1,5 @@
 """
-Database models for XMP Auth Server (Multi-Platform Architecture)
+Database models for XMP Server (Multi-Platform Architecture)
 """
 from sqlalchemy import (
     Column, BigInteger, String, Integer, Boolean, Text,

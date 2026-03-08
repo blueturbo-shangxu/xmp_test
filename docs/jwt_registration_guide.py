@@ -231,7 +231,7 @@ def create_app() -> FastAPI:
     展示如何注册JWT中间件
     """
     app = FastAPI(
-        title="XMP Auth Server",
+        title="XMP Server",
         description="API with JWT Authentication",
         version="1.0.0"
     )
@@ -261,7 +261,7 @@ from fastapi import FastAPI, Depends
 from src.middleware.token_verify import JWTBearer
 from src.api import api_router, auth_router
 
-app = FastAPI(title="XMP Auth Server")
+app = FastAPI(title="XMP Server")
 
 # 方式1: 在路由文件中使用 (推荐)
 # 在 src/api/api.py 中:

@@ -1,6 +1,6 @@
 """
 API 测试示例脚本
-用于测试 XMP Auth Server 的各个 API 接口
+用于测试 XMP Server 的各个 API 接口
 """
 import requests
 import json
@@ -11,8 +11,8 @@ BASE_URL = "http://localhost:8000"
 CUSTOMER_ID = "123-456-7890"  # 替换为你的 Google Ads Customer ID
 
 
-class XMPAuthClient:
-    """XMP Auth Server API 客户端"""
+class XMPClient:
+    """XMP Server API 客户端"""
 
     def __init__(self, base_url: str = BASE_URL):
         self.base_url = base_url
@@ -101,10 +101,10 @@ def print_json(data: Dict):
 def main():
     """主测试流程"""
     print("=" * 60)
-    print("XMP Auth Server API 测试")
+    print("XMP Server API 测试")
     print("=" * 60)
 
-    client = XMPAuthClient()
+    client = XMPClient()
 
     # 1. 健康检查
     print("\n1. 健康检查")

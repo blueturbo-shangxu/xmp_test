@@ -1,5 +1,5 @@
 -- ========================================
--- XMP Auth Server Database Schema
+-- XMP Server Database Schema
 -- Multi-Platform Architecture
 -- ========================================
 

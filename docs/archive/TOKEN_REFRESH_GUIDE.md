@@ -55,10 +55,10 @@ crontab -e
 
 ```bash
 # 每小时执行一次token刷新
-0 * * * * cd /path/to/xmp_auth_server && /usr/bin/python3 refresh_tokens.py >> logs/cron_refresh.log 2>&1
+0 * * * * cd /path/to/xmp_server && /usr/bin/python3 refresh_tokens.py >> logs/cron_refresh.log 2>&1
 
 # 每天检查一次无效token
-0 9 * * * cd /path/to/xmp_auth_server && /usr/bin/python3 refresh_tokens.py --check-invalid >> logs/cron_invalid.log 2>&1
+0 9 * * * cd /path/to/xmp_server && /usr/bin/python3 refresh_tokens.py --check-invalid >> logs/cron_invalid.log 2>&1
 ```
 
 ### 方式2: Windows 任务计划程序
@@ -69,7 +69,7 @@ crontab -e
 4. 操作: 启动程序
    - 程序: `python.exe`
    - 参数: `refresh_tokens.py`
-   - 起始于: `G:\work\xmp_auth_server`
+   - 起始于: `G:\work\xmp_server`
 
 ### 方式3: Systemd Timer (Linux)
 
@@ -81,7 +81,7 @@ Description=XMP Token Refresh Service
 
 [Service]
 Type=oneshot
-WorkingDirectory=/path/to/xmp_auth_server
+WorkingDirectory=/path/to/xmp_server
 ExecStart=/usr/bin/python3 refresh_tokens.py
 User=your-user
 ```
@@ -402,7 +402,7 @@ if __name__ == '__main__':
 创建 `/etc/logrotate.d/xmp-token-refresh`:
 
 ```
-/path/to/xmp_auth_server/logs/token_refresh.log {
+/path/to/xmp_server/logs/token_refresh.log {
     daily
     rotate 30
     compress

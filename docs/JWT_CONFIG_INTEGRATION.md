@@ -7,7 +7,7 @@
 #### conf/.env（实际配置）
 ```env
 # JWT配置
-JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_auth_server_v1_2026
+JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_server_v1_2026
 JWT_TOKEN_EXPIRE_DAYS=180
 ```
 
@@ -228,10 +228,10 @@ ValueError: JWT_SECRET is not configured
 配置在应用启动时加载，需要重启服务：
 ```bash
 # 重启服务
-systemctl restart xmp_auth_server
+systemctl restart xmp_server
 
 # 或者使用进程管理工具
-pm2 restart xmp_auth_server
+pm2 restart xmp_server
 ```
 
 ## 📚 相关文档

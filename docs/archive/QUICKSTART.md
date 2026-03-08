@@ -53,7 +53,7 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=你的数据库密码
-DB_NAME=xmp_auth_server
+DB_NAME=xmp_server
 
 # Google OAuth2 配置 (从 Google Cloud Console 获取)
 GOOGLE_CLIENT_ID=你的客户端ID.apps.googleusercontent.com
@@ -113,7 +113,7 @@ uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 INFO:     Started server process
 INFO:     Waiting for application startup.
-INFO:     Starting XMP Auth Server...
+INFO:     Starting XMP Server...
 INFO:     Database connection OK
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000

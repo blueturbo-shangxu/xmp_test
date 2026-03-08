@@ -291,10 +291,10 @@ OAuth2 回调端点 (由 Google 自动调用)
 
 ```bash
 # 实时查看日志
-tail -f logs/xmp_auth_server.log
+tail -f logs/xmp_server.log
 
 # 查看最近的错误
-grep ERROR logs/xmp_auth_server.log | tail -20
+grep ERROR logs/xmp_server.log | tail -20
 ```
 
 日志级别:

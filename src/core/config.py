@@ -1,5 +1,5 @@
 """
-Configuration module for XMP Auth Server
+Configuration module for XMP Server
 Loads environment variables and provides configuration settings
 """
 import os

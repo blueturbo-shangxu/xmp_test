@@ -33,7 +33,7 @@
 签名 = MD5(签名盐)
 ```
 
-其中 `SIGNATURE_SALT = "xmp_auth_server_v1_2026"` 是常量。
+其中 `SIGNATURE_SALT = "xmp_server_v1_2026"` 是常量。
 
 ## API 参考
 

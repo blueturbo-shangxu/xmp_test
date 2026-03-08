@@ -10,7 +10,7 @@ JWT token 的加密密钥，用于生成和验证 JWT token。
 
 **配置示例：**
 ```env
-JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_auth_server_v1_2026
+JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_server_v1_2026
 ```
 
 **安全建议：**
@@ -114,7 +114,7 @@ token = generate_jwt_token(
 
 ```env
 # JWT配置
-JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_auth_server_v1_2026
+JWT_SECRET=JLp?9O&02jFfsoE$23_xmp_server_v1_2026
 JWT_TOKEN_EXPIRE_DAYS=180
 ```
 
@@ -186,7 +186,7 @@ class Settings(BaseSettings):
 3. **重启应用**
    ```bash
    # 重启服务
-   systemctl restart xmp_auth_server
+   systemctl restart xmp_server
    ```
 
 4. **用户影响**
